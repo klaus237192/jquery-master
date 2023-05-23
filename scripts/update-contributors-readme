@@ -1,0 +1,16 @@
+#!/bin/bash
+
+repo=$1
+input=$2
+marker=$3
+file=$4
+
+
+CONTRIBUTORS=`./scripts/contributors.js -r $repo -f $input -m | tr '\n' '☺'`
+if echo "$CONTRIBUTORS" | grep ERROR > /dev/null; then
+    echo "$CONTRIBUTORS" | tr '☺' '\n'
+else
+    cat $file | sed -n "/${marker}-START/{p;:a;N;/${marker}-END/!ba;s%.*\n%${CONTRIBUTORS}%};p" | tr '☺' '\n' > README.tmp
+    cp README.tmp $file
+    rm README.tmp
+fi
